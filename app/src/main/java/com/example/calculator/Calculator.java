@@ -19,6 +19,12 @@ public class Calculator extends AppCompatActivity {
         resultTV = findViewById(R.id.result_tv);
     }
 
+    private boolean hasDot = false;
+    private String sqrtOperator = "";
+    private boolean operatorClicked = false;
+
+    String savedNum = "";
+    String savedOperator = "";
     public void onDigitClick(View view) {
         Button btn = ((Button) view);
         String buttonText = btn.getText().toString();
@@ -33,29 +39,19 @@ public class Calculator extends AppCompatActivity {
         }
     }
 
-    private boolean hasDot = false;
-    private String sqrtOperator = "";
-    private boolean operatorClicked = false;
-
-    String savedNum = "";
-    String savedOperator = "";
-
     public void onOperatorClick(View view) {
         Button clickedOperator = ((Button) view);
         if (!operatorClicked) {
             if (savedNum.isEmpty()) {
                 savedNum = resultTV.getText().toString();
             } else if (!savedOperator.isEmpty()) {
-
                 String rhs = resultTV.getText().toString();
                 savedNum = calculate(savedNum, savedOperator, rhs);
             }
-
             savedOperator = clickedOperator.getText().toString();
             resultTV.setText("");
             operatorClicked = true;
         }
-        //hasDot = false;
     }
 
     public void onSqrtClick(View view) {
@@ -63,9 +59,30 @@ public class Calculator extends AppCompatActivity {
         resultTV.setText("√");
     }
 
+    public void onClearClick(View view) {
+        resultTV.setText("");
+        savedNum = "";
+        savedOperator = "";
+        hasDot = false;
+    }
+
+    public void onBackClick(View view) {
+        int length = resultTV.getText().length();
+        if (length > 0)
+            resultTV.setText(resultTV.getText().subSequence(0, length - 1));
+    }
+
     public void onEqualClick(View view) {
         String rhs = resultTV.getText().toString();
-        if (!sqrtOperator.isEmpty()) {
+        if (sqrtOperator.isEmpty()) {
+            if (!savedOperator.isEmpty()) {
+                String result = calculate(savedNum, savedOperator, rhs);
+                resultTV.setText(result);
+                savedOperator = "";
+                savedNum = "";
+                operatorClicked = false;
+            }
+        } else {
             if (rhs.equals("√")) {
                 Toast.makeText(this, "Enter a number after the square root operation", Toast.LENGTH_SHORT).show();
                 resultTV.setText("");
@@ -79,13 +96,6 @@ public class Calculator extends AppCompatActivity {
                     resultTV.setText("");
                 }
                 sqrtOperator = "";
-            }
-        } else {
-            if (!savedOperator.isEmpty()) {
-                String result = calculate(savedNum, savedOperator, rhs);
-                resultTV.setText(result);
-                savedOperator = "";
-                savedNum = "";
             }
         }
     }
@@ -112,19 +122,5 @@ public class Calculator extends AppCompatActivity {
 
         return result + "";
     }
-
-    public void onClearClick(View view) {
-        resultTV.setText("");
-        savedNum = "";
-        savedOperator = "";
-        hasDot = false;
-    }
-
-    public void onBackClick(View view) {
-        int length = resultTV.getText().length();
-        if (length > 0)
-            resultTV.setText(resultTV.getText().subSequence(0, length - 1));
-    }
-
 
 }

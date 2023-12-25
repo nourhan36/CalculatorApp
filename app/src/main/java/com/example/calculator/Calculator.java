@@ -37,6 +37,7 @@ public class Calculator extends AppCompatActivity {
         } else {
             resultTV.append(buttonText);
         }
+        operatorClicked = false;
     }
 
     public void onOperatorClick(View view) {
@@ -74,6 +75,10 @@ public class Calculator extends AppCompatActivity {
 
     public void onEqualClick(View view) {
         String rhs = resultTV.getText().toString();
+        if (rhs.isEmpty()) {
+            Toast.makeText(this, "Enter a number", Toast.LENGTH_SHORT).show();
+            return;
+        }
         if (sqrtOperator.isEmpty()) {
             if (!savedOperator.isEmpty()) {
                 String result = calculate(savedNum, savedOperator, rhs);
